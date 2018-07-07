@@ -116,6 +116,7 @@ FROM Geography G, Store_Information S
 WHERE G.Store_Name = S.Store_Name
 GROUP BY G.Region_Name
 
+
 /* SQL OUTER JOIN (外部連接) */
 -- 外部連接的語法是依資料庫的不同而有所不同的
 -- MSSQL SERVER (FULL OUTER JOIN)
@@ -125,6 +126,41 @@ FULL OUTER JOIN Store_Information S
 ON G.Store_Name = S.Store_Name
 GROUP BY G.Store_Name;
 
+
+/* SQL Concatenate 函數 */
+SELECT Region_Name + ' ' + Store_Name
+FROM Geography
+WHERE Store_Name = 'Boston'
+
+-- MySQL/Oracle:
+SELECT CONCAT(Region_Name, Store_Name) 
+FROM Geography 
+WHERE Store_Name = 'Boston';
+
+-- SqlServer CharIndex 函數的使用
+select charindex('A','BADF',1) 
+
+-- SqlServer 中 SubString 函數的使用
+SELECT SUBSTRING(Store_Name, 1, 3) 
+FROM Geography 
+WHERE Store_Name = 'Los Angeles';
+
+-- SQL Trim 函數
+SELECT TRIM ('    Sample     ');
+SELECT LTRIM ('   Sample dd  ');
+SELECT RTRIM (' cc  Sample   ');
+
+-- SQL Length 函數
+SELECT Len(Store_Name) 
+FROM Geography 
+WHERE Store_Name = 'Los Angeles';
+
+SELECT Region_Name, Len(Region_Name) 
+FROM Geography;
+
+-- SQL Replace 函數
+SELECT REPLACE (Region_Name, 'ast', 'astern')
+FROM Geography;
 
 
 

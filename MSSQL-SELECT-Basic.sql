@@ -389,3 +389,108 @@ ON G.Store_Name = S.Store_Name
 GROUP BY G.Store_Name;
 
 
+/* 
+SQL Concatenate 函數
+將由不同欄位獲得的資料串連在一起
+--------------------------------------
+MySQL: CONCAT()
+Oracle: CONCAT(), ||
+        只允許兩個參數；換言之，一次只能將兩個字串串連起來。
+        但可以用 '||' 來一次串連多個字串。
+SQL Server: +
+--------------------------------------
+CONCAT(字串1, 字串2, 字串3, ...)
+--------------------------------------
+*/
+
+-- MSSQL SERVER：將由不同欄位獲得的資料串連在一起
+SELECT Region_Name + ' ' + Store_Name
+FROM Geography
+WHERE Store_Name = 'Boston'
+
+-- MySQL/Oracle:
+SELECT CONCAT(Region_Name, Store_Name) 
+FROM Geography 
+WHERE Store_Name = 'Boston';
+
+
+/*
+SQL SUBSTRING 函數
+用來抓出一個欄位資料中的其中一部分
+這個函數的名稱在不同的資料庫中不完全一樣
+--------------------------------------
+MySQL: SUBSTR( ), SUBSTRING( )
+Oracle: SUBSTR( )
+SQL Server: SUBSTRING( )
+--------------------------------------
+SUBSTR (str, pos)
+
+SUBSTR (str, pos, len)
+--------------------------------------
+*/
+
+SELECT SUBSTRING(Store_Name, 1, 3) 
+FROM Geography 
+WHERE Store_Name = 'Los Angeles';
+
+
+/*
+SQL Trim 函數
+移除掉一個字串中的字頭或字尾，最常見的用途是移除字首或字尾的空白
+這個函數在不同的資料庫中有不同的名稱：
+-------------------------------------------------------
+MySQL: TRIM( ), RTRIM( ), LTRIM( )
+Oracle: RTRIM( ), LTRIM( )
+SQL Server: RTRIM( ), LTRIM( )
+-------------------------------------------------------
+TRIM ([ [位置] [要移除的字串] FROM ] 字串): 
+        [位置] 的可能值為 LEADING (起頭), TRAILING (結尾), or BOTH (起頭及結尾)
+        這個函數將把 [要移除的字串] 從字串的起頭、結尾，或是起頭及結尾移除。
+        如果我們沒有列出 [要移除的字串] 是什麼的話，那空白就會被移除。
+
+LTRIM (字串): 將所有字串起頭的空白移除。
+RTRIM (字串): 將所有字串結尾的空白移除。
+-------------------------------------------------------
+*/
+
+SELECT TRIM ('    Sample     ');
+SELECT LTRIM ('   Sample dd  ');
+SELECT RTRIM (' cc  Sample   ');
+
+
+/*
+SQL Length 函數
+用來找出一個字串的長度。
+這個函數的名稱在不同的資料庫中不完全一樣：
+-------------------------------------
+MySQL: LENGTH( )
+Oracle: LENGTH( )
+SQL Server: LEN( )
+-------------------------------------
+*/
+
+-- SQL LEN()
+SELECT Len(Store_Name) 
+FROM Geography 
+WHERE Store_Name = 'Los Angeles';
+
+SELECT Region_Name, Len(Region_Name) 
+FROM Geography;
+
+
+/*
+SQL Replace 函數
+用來改變一個字串的內容。
+---------------------------------------------
+在字串 str1 中，當 str2 出現時，將其以 str3 替代
+
+Replace (str1, str2, str3)
+---------------------------------------------
+*/
+
+SELECT REPLACE (Region_Name, 'ast', 'astern')
+FROM Geography;
+
+
+
+
