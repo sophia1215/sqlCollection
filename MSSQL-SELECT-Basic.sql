@@ -261,6 +261,17 @@ SELECT Store_Name, SUM(Sales)
 FROM Store_Information
 GROUP BY Store_Name
 
+/* GROUP BY 與聚合函數 使用注意點 */
+-- 在不使用聚合函數的時候，group by 子句中必須包含所有的列，否則會報錯，如下
+SELECT Store_name Store, Sales
+FROM Store_Information
+GROUP BY Store_Name, Sales
+
+/* 
+可以看出來 GROUP BY 在這裡並沒有發揮任何的作用，我們完全可以直接 SELECT 而不用 GROUP BY
+所以 GROUP BY 子句要配合聚合函數使用，
+而且在配合聚合函數使用的時候，在 GROUP BY 子句中不要加上聚合函數處的列名（加入as了的話）
+*/
 
 /* 
 SQL Having
@@ -282,5 +293,100 @@ SELECT Store_Name, SUM(Sales) AS 'SUM(Sales)'
 FROM Store_Information
 GROUP BY Store_Name
 HAVING SUM(Sales) > 1500
+
+
+/* 
+SQL Alias(別名)
+最常用到的別名有兩種：欄位別名 及 表格別名
+欄位別名：是為了讓 SQL 產生的結果易讀
+        如果這個欄位不是一個簡單的總合，而是一個複雜的計算，那欄位名就沒有這麼易懂了
+
+表格別名：便於用 SQL 由數個不同的表格中獲取資料
+        只要在 FROM 子句中的表格名後空一格，然後再列出要用的表格別名就可以了
+-------------------------------------------------------------------------
+SELECT "表格別名"."欄位1" "欄位別名" 
+FROM "表格名" "表格別名";
+-------------------------------------------------------------------------
+*/
+
+-- 加上欄位別名以及表格別名
+SELECT S.Store_name Store, SUM(S.Sales) "Total(Sales)"
+FROM Store_Information S
+GROUP BY S.Store_Name
+
+
+/* 
+SQL AS
+AS 關鍵字是用來指定欄位別名或是表格別名的
+它是被放在欄位名和欄位別名之間，或是放在表格名和表格別名之間
+-------------------------------------------------------------------------
+SELECT "表格別名"."欄位1" AS "欄位別名" 
+FROM "表格名" AS "表格別名";
+-------------------------------------------------------------------------
+*/	
+
+-- 運用 AS 這個關鍵字來找出每一間店的營業額總值：
+SELECT S.Store_name AS Store, SUM(S.Sales) AS "Total Sales"
+FROM Store_Information AS S
+GROUP BY S.Store_Name
+
+/* 
+T-SQL 中的 JOIN 語法解析 (for SQL Server)
+https://dotblogs.com.tw/caubekimo/2010/07/28/16874
+*/
+
+/* 
+SQL 表格連接 (Join)
+https://www.1keydata.com/tw/sql/sqljoins.html
+
+這個 WHERE 子句是一個連接的靈魂人物，因為它的角色是確定兩個表格之間的連接是正確的。
+如果 WHERE 子句是錯誤的，我們就極可能得到一個笛卡兒連接 (Cartesian join)。
+笛卡兒連接會造成我們得到所有兩個表格每兩行之間所有可能的組合。
+
+Cartesian join ／ 笛卡兒乘積 (Cartesian product)／CROSS JOIN
+如果不帶WHERE條件子句，它將會返回被連接的兩個表的笛卡爾積，返回結果的行數等於兩個表行數的乘積
+http://www.itread01.com/content/1495776073.html
+*/
+
+-- 求每一區 (Region_Name) 的營業額 (Sales)
+SELECT G.Region_Name REGION, SUM(S.Sales) SALES
+FROM Geography G, Store_Information S
+WHERE G.Store_Name = S.Store_Name
+GROUP BY G.Region_Name
+
+
+/* 
+左連接 (left join)，又稱內部連接 (inner join)
+在這個情況下，要兩個表格內都有同樣的值，那一筆資料才會被選出
+*/
+https://dotblogs.com.tw/caubekimo/2010/07/28/16874
+
+/* 
+SQL OUTER JOIN (外部連接)
+https://www.1keydata.com/tw/sql/sqlouterjoin.html
+
+想要列出一個表格中每一筆的資料，無論它的值在另一個表格中有沒有出現
+外部連接的語法是依資料庫的不同而有所不同的：
+
+Oracle — 
+我們會在 WHERE 子句中要選出所有資料的那個表格之後加上一個 "(+)" 
+來代表說這個表格中的所有資料我們都要。
+
+圖解SQL的inner join、left join、right join、full outer join、union、union all的區別
+https://hk.saowen.com/a/95b9ef6e416701f294551cb3774e3144c3bb793ecd2392dea4833fbe8430b635
+*/
+
+-- Oracle
+SELECT G.Store_Name, SUM(S.Sales) SALES 
+FROM Geography G, Store_Information S 
+WHERE G.Store_Name = S.Store_Name (+) 
+GROUP BY G.Store_Name;
+
+-- MSSQL SERVER (FULL OUTER JOIN)
+SELECT G.Store_Name, SUM(S.Sales) SALES
+FROM Geography G
+FULL OUTER JOIN Store_Information S
+ON G.Store_Name = S.Store_Name
+GROUP BY G.Store_Name;
 
 
