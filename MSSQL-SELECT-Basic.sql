@@ -359,7 +359,6 @@ GROUP BY G.Region_Name
 左連接 (left join)，又稱內部連接 (inner join)
 在這個情況下，要兩個表格內都有同樣的值，那一筆資料才會被選出
 */
-https://dotblogs.com.tw/caubekimo/2010/07/28/16874
 
 /* 
 SQL OUTER JOIN (外部連接)
