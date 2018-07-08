@@ -163,5 +163,112 @@ SELECT REPLACE (Region_Name, 'ast', 'astern')
 FROM Geography;
 
 
+/* SQL Create View */
+-- 建立 V_Geography 的視觀表(記得加；)
+CREATE VIEW V_Geography
+AS SELECT Region_Name, Store_Name
+FROM Geography;
+
+SELECT * FROM V_Geography;
+
+-- 建立 V_REGION_SALES 的視觀表(記得加；)
+CREATE VIEW V_REGION_SALES
+AS
+SELECT G.Region_Name REGION, SUM(S.Sales) SALES
+FROM Geography G, Store_Information S
+WHERE G.Store_Name = S.Store_Name
+GROUP BY G.Region_Name;
+
+SELECT * FROM V_REGION_SALES;
+
+
+/* SQL Create Index */
+-- 在 Last_Name 這個欄位上建一個索引
+CREATE INDEX IDX_Customer_Last_Name
+ON Customer(Last_Name);
+
+-- 在 City 及 Country 這兩個欄位上建一個索引
+CREATE INDEX IDX_Customer_Location
+ON Customer(City, Country);
+
+
+/* SQL Insert Into */
+-- 1次輸入一筆
+INSERT INTO Customer 
+  (First_Name, Last_Name, Address, City, Country, Birth_Date)
+VALUES 
+  ('Sophia', 'Wang', 'Street 100', 'Taipei', 'Taiwang', '08-Jan-1999');
+
+-- 1次輸入多筆的資料
+INSERT INTO Store_Information 
+  (Store_Name, Sales, Txn_Date)
+SELECT Store_Name, Sales, Txn_Date
+FROM Sales_Information
+WHERE Year(Txn_Date) = 1998;
+
+
+/* 
+-------------------------------------------------
+SQL Advance
+-------------------------------------------------
+*/
+
+/* SQL CASE */
+-- 將 'Los Angeles' 的 Sales 數值乘以 2，以及
+-- 將 'San Diego' 的 Sales 數值乘以 1.5
+SELECT Store_Name, 
+       CASE Store_Name
+         WHEN 'Los Angeles' THEN Sales * 2
+         WHEN 'San Diego' THEN Sales * 1.5
+         ELSE Sales
+       END
+       "New_Sales",
+       Sales "Old_Sales",
+       (SELECT convert(varchar, Txn_Date, 105)) AS Txn_Date
+FROM Store_Information  
+
+/* SQL 排名 (Self Join)(COUNT) */
+-- 常用在同一表內不同數據間對同一列的比較
+SELECT a1.Name, a1.Sales, COUNT(a2.Sales) Sales_Rank
+FROM Total_Sales a1, Total_Sales a2
+WHERE a1.Sales <= a2.Sales OR
+      (a1.Sales = a2.Sales AND a1.Name = a2.Name)
+GROUP BY a1.Name, a1.Sales
+ORDER BY a1.Sales DESC, a1.Name DESC
+
+
+/* SQL 中位數 */
+-- SQL 中位數 (MySQL)
+SELECT Sales Median 
+FROM 
+  (
+    SELECT a1.Name, a1.Sales, COUNT(a1.Sales) Rank 
+    FROM Total_Sales a1, Total_Sales a2 
+    WHERE a1.Sales < a2.Sales OR (a1.Sales=a2.Sales AND a1.Name <= a2.Name) 
+    GROUP BY a1.Name, a1.Sales 
+    ORDER BY a1.Sales desc
+  ) a3 
+WHERE Rank = (SELECT (COUNT(*)+1) DIV 2 FROM Total_Sales);
+
+
+/* SQL 累積總計(SUM) */
+SELECT a1.Name, a1.Sales, SUM(a2.Sales) Running_Total 
+FROM Total_Sales a1, Total_Sales a2 
+WHERE a1.Sales <= a2.Sales OR 
+     (a1.Sales = a2.Sales AND a1.Name = a2.Name) 
+GROUP BY a1.Name, a1.Sales 
+ORDER BY a1.Sales DESC, a1.Name DESC;
+
+
+/* SQL MINUS */
+-- Oracle
+SELECT Txn_Date FROM Store_Information
+MINUS
+SELECT Txn_Date FROM Internet_Sales;
+
+-- MSSQL SEVER
+SELECT Txn_Date FROM Store_Information
+EXCEPT
+SELECT Txn_Date FROM Internet_Sales;
 
 

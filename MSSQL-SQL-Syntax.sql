@@ -34,6 +34,33 @@ https://www.fooish.com/sql/cross-join.html
 */
 
 
+/*
+The ORDER BY clause is invalid in views, inline functions, derived tables, subqueries, and common table expressions, unless TOP, OFFSET or FOR XML is also specified.
+*/
+
+
+/* SQL 排名 (Self Join) */
+-- 常用在同一表內不同數據間對同一列的比較
+SELECT a1.Name, a1.Sales, COUNT(a2.Sales) Sales_Rank
+FROM Total_Sales a1, Total_Sales a2
+WHERE a1.Sales <= a2.Sales OR
+      (a1.Sales = a2.Sales AND a1.Name = a2.Name)
+GROUP BY a1.Name, a1.Sales
+ORDER BY a1.Sales DESC, a1.Name DESC
+
+
+-- SQL 中位數 (MySQL)
+SELECT Sales Median 
+FROM 
+  (
+    SELECT a1.Name, a1.Sales, COUNT(a1.Sales) Rank 
+    FROM Total_Sales a1, Total_Sales a2 
+    WHERE a1.Sales < a2.Sales OR (a1.Sales=a2.Sales AND a1.Name <= a2.Name) 
+    GROUP BY a1.Name, a1.Sales 
+    ORDER BY a1.Sales desc
+  ) a3 
+WHERE Rank = (SELECT (COUNT(*)+1) DIV 2 FROM Total_Sales);
+
 
 
 

@@ -142,10 +142,63 @@ CREATE TABLE ORDERS (
 CREATE TABLE ORDERS (
     Order_ID integer PRIMARY KEY,
     Order_Date datetime,
-    Customer_SID integer REFERENCES CUSTOMER (SID), 
     Customer_SID integer REFERENCES CUSTOMER (SID),
     Amount double
 );
+
+
+/* 
+SQL Create View 
+可以被當作是虛擬表格。
+表　格：有實際儲存資料，
+視觀表：是建立在表格之上的一個架構，它本身並不實際儲存資料
+--------------------------------------------------
+CREATE VIEW "視觀表名" 
+AS "SQL SELECT 語句";
+--------------------------------------------------
+*/
+
+-- 建立 V_Geography 的視觀表(記得加；)
+CREATE VIEW V_Geography
+AS SELECT Region_Name, Store_Name
+FROM Geography;
+
+SELECT * FROM V_Geography;
+
+-- 建立 V_REGION_SALES 的視觀表(記得加；)
+CREATE VIEW V_REGION_SALES
+AS
+SELECT G.Region_Name REGION, SUM(S.Sales) SALES
+FROM Geography G, Store_Information S
+WHERE G.Store_Name = S.Store_Name
+GROUP BY G.Region_Name;
+
+SELECT * FROM V_REGION_SALES;
+
+
+/* 
+SQL Create Index
+索引 (Index) 可以幫助我們從表格中快速地找到需要的資料
+如果一個表格沒有索引的話，資料庫系統就需要將整個表格的資料讀出 (這個過程叫做 Table Scan)
+若有適當的索引，資料庫系統就可以先由這個索引去找出需要的資料是在表格的什麼地方，然後直接去那些地方抓資料
+
+索引的命名並沒有一個固定的方式
+通常會用的方式是在名稱前加一個字首，例如 "IDX_" ，來避免與資料庫中的其他物件混淆
+
+另外，在索引名之內包括表格名及欄位名也是一個好的方式
+請讀者注意，每個資料庫會有它本身的 CREATE INDEX 語法，而不同資料庫的語法會有不同
+---------------------------------------------------------------------------------------
+CREATE INDEX "索引名" ON "表格名" (欄位名);
+---------------------------------------------------------------------------------------
+*/
+
+-- 在 Last_Name 這個欄位上建一個索引
+CREATE INDEX IDX_Customer_Last_Name
+ON Customer(Last_Name);
+
+-- 在 City 及 Country 這兩個欄位上建一個索引
+CREATE INDEX IDX_Customer_Location
+ON Customer(City, Country);
 
 
 

@@ -39,10 +39,37 @@ VALUES
     ('Boston', 700, '08-Jan-1999');
 
 
+/* 
+有兩種作法可以將資料輸入表格中內： 
+一種是一次輸入一筆：
+-----------------------------------------------
+INSERT INTO "表格名" ("欄位1", "欄位2", ...)
+VALUES ("值1", "值2", ...);
+-----------------------------------------------
 
+另一種是一次輸入好幾筆：
+-----------------------------------------------
+INSERT INTO "表格1" ("欄位1", "欄位2", ...)
+SELECT "欄位3", "欄位4", ...
+FROM "表格2";
+-----------------------------------------------
+*/
 
+-- 1次輸入一筆
+INSERT INTO Customer 
+  (First_Name, Last_Name, Address, City, Country, Birth_Date)
+VALUES 
+  ('Sophia', 'Wang', 'Street 100', 'Taipei', 'Taiwan', '08-Jan-1999');
 
-
-
+-- 1次輸入多筆的資料
+/* 
+將 1998 年的營業額資料放入 Sales_Information 表格
+而我們知道資料的來源是可以由 Sales_Information 表格取得
+*/
+INSERT INTO Store_Information 
+  (Store_Name, Sales, Txn_Date)
+SELECT Store_Name, Sales, Txn_Date
+FROM Sales_Information
+WHERE Year(Txn_Date) = 1998;
 
 
